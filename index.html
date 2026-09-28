@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sdelka</title>
+
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #000000);
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin-top: 40px;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 12px;
+      font-size: 17px;
+      background: var(--tg-theme-button-color, #2481cc);
+      color: var(--tg-theme-button-text-color, #ffffff);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🤝 Sdelka</h1>
+
+    <p>Добро пожаловать в Mini App!</p>
+
+    <button onclick="showUser()">
+      Мой профиль
+    </button>
+
+    <p id="user"></p>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    function showUser() {
+      const user = tg.initDataUnsafe.user;
+
+      if (user) {
+        document.getElementById("user").textContent =
+          "Привет, " + (user.first_name || "пользователь") + "!";
+      } else {
+        document.getElementById("user").textContent =
+          "Открой приложение через Telegram.";
+      }
+    }
+  </script>
+</body>
+</html>
