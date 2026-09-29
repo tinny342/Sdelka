@@ -1,1742 +1,746 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mini App</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-<style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
-
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100%;
-  background:#000;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-}
-
-body{
-  overflow-x:hidden;
-}
-
-button,input,textarea{
-  font:inherit;
-}
-
-button{
-  border:0;
-  outline:0;
-  background:none;
-  color:inherit;
-  cursor:pointer;
-}
-
-#app{
-  width:100%;
-  min-height:100vh;
-  background:#000;
-}
-
-.screen{
-  width:100%;
-  max-width:520px;
-  min-height:100vh;
-  margin:auto;
-  padding:12px 14px 88px;
-}
-
-/* SPLASH */
-
-.splash{
-  position:fixed;
-  inset:0;
-  z-index:999;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:opacity .45s ease,visibility .45s ease;
-}
-
-.splash.hide{
-  opacity:0;
-  visibility:hidden;
-}
-
-.logo{
-  width:88px;
-  height:88px;
-}
-
-.splash-loader{
-  position:absolute;
-  bottom:28px;
-  width:106px;
-  height:3px;
-  border-radius:20px;
-  background:linear-gradient(90deg,#666,#fff,#666);
-}
-
-/* LOGO */
-
-.logo-small{
-  width:34px;
-  height:34px;
-}
-
-/* HEADER */
-
-.header{
-  height:55px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.header-actions{
-  display:flex;
-  gap:17px;
-  color:#cfcfcf;
-}
-
-.icon{
-  width:21px;
-  height:21px;
-}
-
-/* SEARCH */
-
-.search{
-  height:44px;
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:9px;
-  padding:0 13px;
-  background:#0b0b0b;
-  border:1px solid #202020;
-  border-radius:14px;
-  color:#777;
-}
-
-.search input{
-  width:100%;
-  min-width:0;
-  border:0;
-  outline:0;
-  background:transparent;
-  color:#eee;
-  font-size:13px;
-}
-
-.search input::placeholder{
-  color:#686868;
-}
-
-/* CATEGORIES */
-
-.categories{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin:12px 0 20px;
-}
-
-.category{
-  height:76px;
-  border-radius:13px;
-  border:1px solid #1e1e1e;
-  background:#090909;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:7px;
-  color:#ddd;
-  font-size:10px;
-}
-
-.category svg{
-  width:22px;
-  height:22px;
-}
-
-/* TITLES */
-
-.title-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin:0 1px 9px;
-}
-
-.title-row h2{
-  font-size:15px;
-  margin:0;
-}
-
-.all{
-  color:#aaa;
-  font-size:11px;
-  display:flex;
-  align-items:center;
-  gap:3px;
-}
-
-/* CARDS */
-
-.card{
-  position:relative;
-  height:112px;
-  margin-bottom:8px;
-  border-radius:12px;
-  background:#090909;
-  border:1px solid #1e1e1e;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#454545;
-}
-
-.card.small{
-  height:64px;
-}
-
-.card svg{
-  width:29px;
-  height:29px;
-}
-
-/* PAGE */
-
-.page-header{
-  height:53px;
-  display:grid;
-  grid-template-columns:38px 1fr 38px;
-  align-items:center;
-}
-
-.page-header h1{
-  text-align:center;
-  font-size:16px;
-  margin:0;
-}
-
-.back,
-.header-right{
-  width:36px;
-  height:36px;
-  display:grid;
-  place-items:center;
-}
-
-/* CHIPS */
-
-.chips{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  padding:10px 0 12px;
-  scrollbar-width:none;
-}
-
-.chips::-webkit-scrollbar{
-  display:none;
-}
-
-.chip{
-  flex:none;
-  padding:8px 13px;
-  border-radius:30px;
-  border:1px solid #222;
-  background:#0b0b0b;
-  color:#999;
-  font-size:10px;
-}
-
-.chip.active{
-  background:#f0f0f0;
-  color:#050505;
-  border-color:#f0f0f0;
-}
-
-/* LISTING */
-
-.listing{
-  position:relative;
-  height:112px;
-  margin-bottom:9px;
-  background:#090909;
-  border:1px solid #202020;
-  border-radius:13px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:#454545;
-}
-
-.heart{
-  position:absolute;
-  right:8px;
-  top:7px;
-  width:30px;
-  height:30px;
-  color:#aaa;
-}
-
-.heart svg{
-  width:18px;
-}
-
-.liked{
-  color:#fff;
-}
-
-.image-icon{
-  width:28px;
-  height:28px;
-}
-
-/* WORK */
-
-.work-card{
-  height:74px;
-  margin-bottom:8px;
-  padding:10px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  position:relative;
-  background:#090909;
-  border:1px solid #202020;
-  border-radius:12px;
-}
-
-.avatar{
-  width:44px;
-  height:44px;
-  flex:none;
-  border-radius:50%;
-  background:#171717;
-  border:1px solid #303030;
-  display:grid;
-  place-items:center;
-  color:#aaa;
-}
-
-.lines{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  gap:7px;
-}
-
-.lines span{
-  display:block;
-  height:6px;
-  width:70%;
-  background:#3a3a3a;
-  border-radius:10px;
-}
-
-.lines span:nth-child(2){
-  width:48%;
-}
-
-.lines span:nth-child(3){
-  width:30%;
-}
-
-/* SEGMENT */
-
-.segment{
-  height:42px;
-  padding:3px;
-  border:1px solid #202020;
-  border-radius:13px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  background:#090909;
-  margin-bottom:15px;
-}
-
-.segment button{
-  border-radius:10px;
-  color:#777;
-  font-size:11px;
-}
-
-.segment .active{
-  background:#f0f0f0;
-  color:#000;
-}
-
-/* EMPTY */
-
-.empty{
-  min-height:350px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-}
-
-.empty-icon{
-  color:#666;
-  margin-bottom:18px;
-}
-
-.empty strong{
-  font-size:13px;
-  margin-bottom:8px;
-}
-
-.empty span{
-  max-width:230px;
-  color:#666;
-  font-size:10px;
-  line-height:1.5;
-}
-
-/* MESSAGES */
-
-.message{
-  height:70px;
-  display:flex;
-  align-items:center;
-  gap:11px;
-  border-bottom:1px solid #1a1a1a;
-}
-
-.message .avatar{
-  width:42px;
-  height:42px;
-}
-
-.message-time{
-  color:#666;
-  font-size:9px;
-}
-
-/* PROFILE */
-
-.profile{
-  display:flex;
-  align-items:center;
-  gap:13px;
-  padding:8px 0 16px;
-}
-
-.profile .avatar{
-  width:58px;
-  height:58px;
-}
-
-.profile-name{
-  font-size:14px;
-  display:block;
-}
-
-.profile-sub{
-  color:#666;
-  font-size:10px;
-  display:block;
-  margin-top:4px;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  border:1px solid #202020;
-  border-radius:13px;
-  background:#090909;
-  padding:13px 0;
-  margin-bottom:12px;
-  text-align:center;
-}
-
-.stats div{
-  font-size:16px;
-  border-right:1px solid #202020;
-}
-
-.stats div:last-child{
-  border:0;
-}
-
-.stats small{
-  display:block;
-  margin-top:4px;
-  color:#666;
-  font-size:9px;
-}
-
-.menu{
-  border:1px solid #202020;
-  border-radius:13px;
-  overflow:hidden;
-  background:#090909;
-}
-
-.menu button{
-  width:100%;
-  height:49px;
-  padding:0 12px;
-  display:flex;
-  align-items:center;
-  gap:11px;
-  border-bottom:1px solid #1b1b1b;
-  color:#ddd;
-  text-align:left;
-}
-
-.menu button:last-child{
-  border:0;
-}
-
-.menu span{
-  flex:1;
-  font-size:11px;
-}
-
-/* CREATE */
-
-.steps{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:4px;
-  margin:8px 0 25px;
-}
-
-.step{
-  text-align:center;
-  color:#555;
-  font-size:8px;
-}
-
-.step b{
-  width:24px;
-  height:24px;
-  margin:auto auto 5px;
-  border-radius:50%;
-  border:1px solid #292929;
-  background:#090909;
-  display:grid;
-  place-items:center;
-}
-
-.step.active{
-  color:#ddd;
-}
-
-.step.active b{
-  color:#000;
-  background:#eee;
-  border-color:#eee;
-}
-
-.create-list{
-  border:1px solid #202020;
-  border-radius:13px;
-  overflow:hidden;
-}
-
-.create-list button{
-  width:100%;
-  height:50px;
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:0 12px;
-  border-bottom:1px solid #1c1c1c;
-}
-
-.create-list button:last-child{
-  border:0;
-}
-
-.create-list span{
-  flex:1;
-  text-align:left;
-  font-size:11px;
-}
-
-.form{
-  display:flex;
-  flex-direction:column;
-  gap:14px;
-}
-
-.form label{
-  color:#aaa;
-  font-size:10px;
-}
-
-.form input,
-.form textarea{
-  width:100%;
-  margin-top:7px;
-  padding:12px;
-  background:#090909;
-  color:#eee;
-  border:1px solid #242424;
-  border-radius:11px;
-  outline:none;
-}
-
-.form textarea{
-  height:120px;
-  resize:none;
-}
-
-.photo-box{
-  height:230px;
-  border:1px dashed #3c3c3c;
-  border-radius:14px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  color:#666;
-}
-
-.photo-box strong{
-  color:#aaa;
-  font-size:12px;
-}
-
-.photo-box span{
-  font-size:9px;
-}
-
-.primary{
-  width:100%;
-  height:48px;
-  margin-top:18px;
-  border-radius:14px;
-  background:#f0f0f0;
-  color:#050505;
-  font-size:13px;
-  font-weight:700;
-}
-
-/* BOTTOM */
-
-.bottom{
-  position:fixed;
-  z-index:100;
-  bottom:0;
-  left:50%;
-  transform:translateX(-50%);
-  width:100%;
-  max-width:520px;
-  height:70px;
-  padding:5px 6px env(safe-area-inset-bottom);
-  background:rgba(0,0,0,.97);
-  border-top:1px solid #1c1c1c;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  align-items:center;
-}
-
-.bottom button{
-  height:53px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  color:#666;
-  font-size:8px;
-}
-
-.bottom button svg{
-  width:18px;
-  height:18px;
-}
-
-.bottom button.active{
-  color:#eee;
-}
-
-.add{
-  width:43px!important;
-  height:43px!important;
-  justify-self:center;
-  border-radius:50%!important;
-  background:#eee!important;
-  color:#000!important;
-  box-shadow:0 0 0 4px #101010;
-}
-
-.add svg{
-  width:23px!important;
-  height:23px!important;
-}
-
-/* HIDDEN */
-
-.hidden{
-  display:none!important;
-}
-</style>
-</head>
-
-<body>
-
-<div id="app">
-
-<!-- SPLASH -->
-<div id="splash" class="splash">
-
-  <!-- ЛОГОТИП -->
-  <svg class="logo" viewBox="0 0 100 100">
-    <defs>
-      <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#fff"/>
-        <stop offset=".5" stop-color="#aaa"/>
-        <stop offset="1" stop-color="#fff"/>
-      </linearGradient>
-    </defs>
-
-    <path
-      d="M57 8
-         L28 36
-         C23 41 23 48 28 53
-         L39 64
-         L51 52
-         L43 44
-         L66 21
-         Z"
-      fill="url(#silver)"
-    />
-
-    <path
-      d="M43 92
-         L72 64
-         C77 59 77 52 72 47
-         L61 36
-         L49 48
-         L57 56
-         L34 79
-         Z"
-      fill="url(#silver)"
-    />
-  </svg>
-
-  <div class="splash-loader"></div>
-</div>
-
-
-<!-- MAIN -->
-<div id="screen" class="screen"></div>
-
-
-<!-- BOTTOM NAV -->
-<nav id="bottom" class="bottom">
-
-  <button data-tab="home" class="active">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M3 10.5 12 3l9 7.5"/>
-      <path d="M5 9v11h14V9"/>
-      <path d="M9 20v-6h6v6"/>
-    </svg>
-    <span>Главная</span>
-  </button>
-
-  <button data-tab="favorites">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M20.8 8.8c0 5.5-8.8 11-8.8 11s-8.8-5.5-8.8-11A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z"/>
-    </svg>
-    <span>Избранное</span>
-  </button>
-
-  <button id="addButton" class="add">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M12 5v14M5 12h14"/>
-    </svg>
-  </button>
-
-  <button data-tab="messages">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-5 2 1.8-4A7.5 7.5 0 1 1 20 11.5Z"/>
-    </svg>
-    <span>Сообщения</span>
-  </button>
-
-  <button data-tab="profile">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <circle cx="12" cy="8" r="4"/>
-      <path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/>
-    </svg>
-    <span>Профиль</span>
-  </button>
-
-</nav>
-
-</div>
-
-
-<script>
-
-/* TELEGRAM */
-
-const tg = window.Telegram?.WebApp;
-
-if(tg){
-  tg.ready();
-  tg.expand();
-
-  try{
-    tg.setHeaderColor("#000000");
-    tg.setBackgroundColor("#000000");
-  }catch(e){}
-}
-
-
-/* STATE */
-
-let currentPage = "home";
-let createStep = 1;
-let favorites = [];
-
-
-/* SVG */
-
-const icons = {
-
-  back: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M15 18l-6-6 6-6"/>
-  </svg>`,
-
-  image: `
-  <svg class="image-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <rect x="3" y="3" width="18" height="18" rx="2"/>
-    <path d="m7 15 3-3 3 3 2-2 3 3"/>
-    <circle cx="9" cy="8" r="1.5"/>
-  </svg>`,
-
-  heart: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M20.8 8.8c0 5.5-8.8 11-8.8 11S3.2 14.3 3.2 8.8A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z"/>
-  </svg>`,
-
-  heartFill: `
-  <svg viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 21S3.2 15.3 3.2 9A4.8 4.8 0 0 1 12 6.2 4.8 4.8 0 0 1 20.8 9C20.8 15.3 12 21 12 21Z"/>
-  </svg>`,
-
-  search: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <circle cx="11" cy="11" r="7"/>
-    <path d="m20 20-4-4"/>
-  </svg>`,
-
-  filter: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M4 7h16M7 12h10M10 17h4"/>
-  </svg>`,
-
-  arrow: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="m9 18 6-6-6-6"/>
-  </svg>`,
-
-  home: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M3 10.5 12 3l9 7.5"/>
-    <path d="M5 9v11h14V9"/>
-    <path d="M9 20v-6h6v6"/>
-  </svg>`,
-
-  car: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M5 17h14l1-5-2-5H6l-2 5 1 5Z"/>
-    <path d="M4 12h16M7 17v2M17 17v2"/>
-    <circle cx="7" cy="15" r="1"/>
-    <circle cx="17" cy="15" r="1"/>
-  </svg>`,
-
-  work: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <rect x="3" y="7" width="18" height="13" rx="2"/>
-    <path d="M8 7V5h8v2M3 12h18"/>
-  </svg>`,
-
-  user: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <circle cx="12" cy="8" r="4"/>
-    <path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/>
-  </svg>`,
-
-  message: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H8l-5 2 1.8-4A7.5 7.5 0 1 1 20 11.5Z"/>
-  </svg>`,
-
-  settings: `
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.7 1.7-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.4v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L8 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6V11.6h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L7.3 8.6 9 6.9l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.1h2.4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.7 1.7-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1V14h-.1a1.7 1.7 0 0 0-1.5 1Z"/>
-  </svg>`
+import React, { useState } from 'react';
+import {
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TextInput,
+  ScrollView,
+  StatusBar,
+  Platform,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+
+const BG = '#050607';
+const CARD = '#0b0d0f';
+const CARD2 = '#101316';
+const LINE = '#1d2125';
+const TEXT = '#f4f5f6';
+const MUTED = '#8c9298';
+const WHITE = '#f6f7f8';
+
+const Logo = ({ small = false }) => (
+  <View style={[styles.logo, small && styles.logoSmall]}>
+    <View style={styles.logoShapeA} />
+    <View style={styles.logoShapeB} />
+  </View>
+);
+
+function Splash({ onStart }) {
+  return (
+    <View style={styles.splash}>
+      <View style={styles.splashCenter}>
+        <Logo />
+      </View>
+
+      <View style={styles.splashBottom}>
+        <Pressable
+          style={styles.primaryButton}
+          onPress={onStart}
+        >
+          <Text style={styles.primaryText}>Начать</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={onStart}
+          style={styles.loginButton}
+        >
+          <Text style={styles.loginText}>Войти</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const tabs = [
+  ['Главная', 'home-outline', 'home'],
+  ['Избранное', 'heart-outline', 'heart'],
+  ['', 'add', 'add'],
+  ['Сообщения', 'chatbubble-ellipses-outline', 'messages'],
+  ['Профиль', 'person-outline', 'profile'],
+];
+
+const categories = [
+  {
+    label: 'Недвижимость',
+    icon: 'home-outline',
+    key: 'realty',
+  },
+  {
+    label: 'Транспорт',
+    icon: 'car-outline',
+    key: 'transport',
+  },
+  {
+    label: 'Работа',
+    icon: 'briefcase-outline',
+    key: 'work',
+  },
+];
+
+const chips = {
+  realty: [
+    'Квартиры',
+    'Дома',
+    'Участки',
+    'Коммерция',
+  ],
+
+  transport: [
+    'Авто',
+    'Мото',
+    'Грузовые',
+    'Спецтехника',
+  ],
+
+  work: [
+    'Все',
+    'Полный день',
+    'Удалённо',
+    'Частичная',
+  ],
 };
 
+function BottomBar({
+  active,
+  go,
+  openCreate,
+}) {
+  return (
+    <View style={styles.bottomBar}>
+      {tabs.map(([label, icon, key]) => (
+        <Pressable
+          key={key}
+          onPress={() =>
+            key === 'add'
+              ? openCreate()
+              : go(key)
+          }
+          style={[
+            styles.tab,
+            key === 'add' &&
+              styles.addTabWrap,
+          ]}
+        >
+          {key === 'add' ? (
+            <View style={styles.addTab}>
+              <Ionicons
+                name="add"
+                size={28}
+                color="#111"
+              />
+            </View>
+          ) : (
+            <>
+              <Ionicons
+                name={
+                  active === key
+                    ? icon.replace(
+                        '-outline',
+                        ''
+                      )
+                    : icon
+                }
+                size={22}
+                color={
+                  active === key
+                    ? TEXT
+                    : MUTED
+                }
+              />
 
-/* RENDER */
-
-const screen = document.getElementById("screen");
-
-
-function searchBox(placeholder){
-
-  return `
-  <div class="search">
-    ${icons.search}
-
-    <input
-      placeholder="${placeholder}"
-      type="text"
-    >
-
-    ${icons.filter}
-  </div>`;
+              <Text
+                style={[
+                  styles.tabText,
+                  active === key &&
+                    styles.tabTextActive,
+                ]}
+              >
+                {label}
+              </Text>
+            </>
+          )}
+        </Pressable>
+      ))}
+    </View>
+  );
 }
 
-
-function pageHeader(title,back=true){
-
-  return `
-  <div class="page-header">
-
-    <button class="back"
-      onclick="${back ? "goHome()" : ""}">
-      ${back ? icons.back : ""}
-    </button>
-
-    <h1>${title}</h1>
-
-    <div class="header-right"></div>
-
-  </div>`;
-}
-
-
-function placeholderCard(small=false){
-
-  return `
-  <div class="card ${small ? "small" : ""}">
-    ${icons.image}
-  </div>`;
-}
-
-
-function listing(id){
-
-  const liked =
-    favorites.includes(id);
-
-  return `
-  <div class="listing">
-
-    ${icons.image}
-
-    <button
-      class="heart ${liked ? "liked" : ""}"
-      onclick="toggleFavorite('${id}')"
-    >
-      ${liked
-        ? icons.heartFill
-        : icons.heart}
-    </button>
-
-  </div>`;
-}
-
-
-/* HOME */
-
-function home(){
-
-  screen.innerHTML = `
-
-    <div class="header">
-
-      <svg
-        class="logo-small"
-        viewBox="0 0 100 100"
+function Header({
+  title,
+  onBack,
+  right,
+}) {
+  return (
+    <View style={styles.header}>
+      <Pressable
+        onPress={onBack}
+        style={styles.iconButton}
       >
-        <defs>
-          <linearGradient
-            id="headSilver"
-            x1="0"
-            y1="0"
-            x2="1"
-            y2="1"
+        <Ionicons
+          name={
+            onBack
+              ? 'arrow-back'
+              : 'menu-outline'
+          }
+          size={23}
+          color={TEXT}
+        />
+      </Pressable>
+
+      <Text style={styles.headerTitle}>
+        {title}
+      </Text>
+
+      {right || (
+        <View style={{ width: 42 }} />
+      )}
+    </View>
+  );
+}
+
+function Search({
+  placeholder = 'Поиск объявлений...',
+}) {
+  return (
+    <View style={styles.search}>
+      <Ionicons
+        name="search-outline"
+        size={19}
+        color={MUTED}
+      />
+
+      <TextInput
+        placeholder={placeholder}
+        placeholderTextColor="#777d83"
+        style={styles.searchInput}
+      />
+
+      <Ionicons
+        name="options-outline"
+        size={20}
+        color={MUTED}
+      />
+    </View>
+  );
+}
+
+function Chips({
+  items,
+  selected,
+  setSelected,
+}) {
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.chips}
+    >
+      {items.map((item) => (
+        <Pressable
+          key={item}
+          onPress={() =>
+            setSelected(item)
+          }
+          style={[
+            styles.chip,
+            selected === item &&
+              styles.chipSelected,
+          ]}
+        >
+          <Text
+            style={[
+              styles.chipText,
+              selected === item &&
+                styles.chipTextSelected,
+            ]}
           >
-            <stop offset="0" stop-color="#fff"/>
-            <stop offset=".5" stop-color="#aaa"/>
-            <stop offset="1" stop-color="#fff"/>
-          </linearGradient>
-        </defs>
+            {item}
+          </Text>
+        </Pressable>
+      ))}
+    </ScrollView>
+  );
+}
 
-        <path
-          d="M57 8L28 36C23 41 23 48 28 53L39 64L51 52L43 44L66 21Z"
-          fill="url(#headSilver)"
+function PlaceholderCard({
+  work = false,
+}) {
+  return (
+    <View style={styles.itemCard}>
+      <View style={styles.itemImage}>
+        <Ionicons
+          name={
+            work
+              ? 'person-outline'
+              : 'image-outline'
+          }
+          size={29}
+          color="#555b60"
+        />
+      </View>
+
+      <View style={styles.itemLines}>
+        <View style={styles.lineWide} />
+        <View style={styles.lineMid} />
+        <View style={styles.lineShort} />
+      </View>
+
+      <Ionicons
+        name="heart-outline"
+        size={21}
+        color="#777d82"
+        style={styles.cardHeart}
+      />
+    </View>
+  );
+}
+
+function Home({
+  go,
+  openCreate,
+}) {
+  return (
+    <View style={styles.screen}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.content
+        }
+      >
+        <View style={styles.homeTop}>
+          <Logo small />
+
+          <View style={styles.topActions}>
+            <Ionicons
+              name="notifications-outline"
+              size={23}
+              color={TEXT}
+            />
+
+            <View
+              style={styles.avatarMini}
+            >
+              <Ionicons
+                name="person"
+                size={14}
+                color="#8b9196"
+              />
+            </View>
+          </View>
+        </View>
+
+        <Search />
+
+        <View
+          style={styles.categoryGrid}
+        >
+          {categories.map((category) => (
+            <Pressable
+              key={category.key}
+              style={
+                styles.categoryCard
+              }
+              onPress={() =>
+                go(category.key)
+              }
+            >
+              <Ionicons
+                name={category.icon}
+                size={27}
+                color={TEXT}
+              />
+
+              <Text
+                style={
+                  styles.categoryText
+                }
+              >
+                {category.label}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View
+          style={styles.sectionHead}
+        >
+          <Text
+            style={styles.sectionTitle}
+          >
+            Рекомендуем
+          </Text>
+
+          <Pressable>
+            <Text style={styles.allText}>
+              Все →
+            </Text>
+          </Pressable>
+        </View>
+
+        <PlaceholderCard />
+        <PlaceholderCard />
+        <PlaceholderCard />
+      </ScrollView>
+
+      <BottomBar
+        active="home"
+        go={go}
+        openCreate={openCreate}
+      />
+    </View>
+  );
+}
+
+function ListingScreen({
+  type,
+  go,
+  openCreate,
+}) {
+  const title =
+    type === 'realty'
+      ? 'Недвижимость'
+      : type === 'transport'
+      ? 'Транспорт'
+      : 'Работа';
+
+  const [selected, setSelected] =
+    useState(chips[type][0]);
+
+  return (
+    <View style={styles.screen}>
+      <Header
+        title={title}
+        onBack={() => go('home')}
+        right={
+          <Pressable
+            style={styles.iconButton}
+          >
+            <Ionicons
+              name="bookmark-outline"
+              size={22}
+              color={TEXT}
+            />
+          </Pressable>
+        }
+      />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.content
+        }
+      >
+        <Search
+          placeholder={`Поиск в ${title.toLowerCase()}...`}
         />
 
-        <path
-          d="M43 92L72 64C77 59 77 52 72 47L61 36L49 48L57 56L34 79Z"
-          fill="url(#headSilver)"
+        <Chips
+          items={chips[type]}
+          selected={selected}
+          setSelected={setSelected}
         />
-      </svg>
 
-      <div class="header-actions">
-        <span>♧</span>
-        ${icons.user}
-      </div>
+        <PlaceholderCard
+          work={type === 'work'}
+        />
 
-    </div>
+        <PlaceholderCard
+          work={type === 'work'}
+        />
 
-    ${searchBox("Поиск объявлений...")}
+        <PlaceholderCard
+          work={type === 'work'}
+        />
 
-    <div class="categories">
+        <PlaceholderCard
+          work={type === 'work'}
+        />
+      </ScrollView>
 
-      <button class="category"
-        onclick="openPage('realty')">
-        ${icons.home}
-        <span>Недвижимость</span>
-      </button>
-
-      <button class="category"
-        onclick="openPage('transport')">
-        ${icons.car}
-        <span>Транспорт</span>
-      </button>
-
-      <button class="category"
-        onclick="openPage('work')">
-        ${icons.work}
-        <span>Работа</span>
-      </button>
-
-    </div>
-
-    <div class="title-row">
-      <h2>Рекомендуем</h2>
-
-      <button class="all">
-        Все
-        ${icons.arrow}
-      </button>
-    </div>
-
-    ${placeholderCard()}
-    ${placeholderCard(true)}
-    ${placeholderCard(true)}
-  `;
+      <BottomBar
+        active={type}
+        go={go}
+        openCreate={openCreate}
+      />
+    </View>
+  );
 }
 
+function Favorites({
+  go,
+  openCreate,
+}) {
+  const [tab, setTab] =
+    useState('Объявления');
 
-/* REALTY */
+  return (
+    <View style={styles.screen}>
+      <Header
+        title="Избранное"
+        onBack={() => go('home')}
+      />
 
-function realty(){
+      <ScrollView
+        contentContainerStyle={
+          styles.content
+        }
+      >
+        <View style={styles.segment}>
+          {[
+            'Объявления',
+            'Продавцы',
+          ].map((item) => (
+            <Pressable
+              key={item}
+              onPress={() =>
+                setTab(item)
+              }
+              style={[
+                styles.segmentItem,
+                tab === item &&
+                  styles.segmentActive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.segmentText,
+                  tab === item &&
+                    styles.segmentTextActive,
+                ]}
+              >
+                {item}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
 
-  screen.innerHTML = `
+        <View style={styles.empty}>
+          <Ionicons
+            name="heart-outline"
+            size={56}
+            color="#5e6469"
+          />
 
-    ${pageHeader("Недвижимость")}
+          <Text
+            style={styles.emptyTitle}
+          >
+            Здесь пока ничего нет
+          </Text>
 
-    ${searchBox("Поиск в недвижимости...")}
+          <Text
+            style={styles.emptyText}
+          >
+            Добавляйте понравившиеся
+            элементы, чтобы быстро их
+            находить
+          </Text>
+        </View>
+      </ScrollView>
 
-    <div class="chips">
-
-      <button class="chip active">
-        Квартиры
-      </button>
-
-      <button class="chip">
-        Дома
-      </button>
-
-      <button class="chip">
-        Участки
-      </button>
-
-      <button class="chip">
-        Коммерция
-      </button>
-
-    </div>
-
-    ${listing("realty1")}
-    ${listing("realty2")}
-    ${listing("realty3")}
-
-  `;
+      <BottomBar
+        active="heart"
+        go={go}
+        openCreate={openCreate}
+      />
+    </View>
+  );
 }
 
+function Messages({
+  go,
+  openCreate,
+}) {
+  const rows = [1, 2, 3, 4];
 
-/* TRANSPORT */
+  return (
+    <View style={styles.screen}>
+      <Header
+        title="Сообщения"
+        onBack={() => go('home')}
+      />
 
-function transport(){
+      <ScrollView
+        contentContainerStyle={
+          styles.content
+        }
+      >
+        <Search
+          placeholder="Поиск по сообщениям..."
+        />
 
-  screen.innerHTML = `
+        {rows.map((row, index) => (
+          <View
+            style={styles.messageRow}
+            key={row}
+          >
+            <View style={styles.avatar}>
+              <Ionicons
+                name="person"
+                size={21}
+                color="#8c9297"
+              />
+            </View>
 
-    ${pageHeader("Транспорт")}
+            <View
+              style={{ flex: 1 }}
+            >
+              <View
+                style={
+                  styles.messageLine
+                }
+              />
 
-    ${searchBox("Поиск в транспорте...")}
+              <View
+                style={[
+                  styles.messageLine,
+                  {
+                    width: '63%',
+                    marginTop: 8,
+                  },
+                ]}
+              />
+            </View>
 
-    <div class="chips">
+            <View
+              style={styles.messageMeta}
+            >
+              <Text
+                style={styles.time}
+              >
+                {
+                  [
+                    '14:32',
+                    '13:17',
+                    '11:24',
+                    'Вчера',
+                  ][index]
+                }
+              </Text>
 
-      <button class="chip active">
-        Авто
-      </button>
+              {index === 0 && (
+                <View
+                  style={styles.unread}
+                >
+                  <Text
+                    style={
+                      styles.unreadText
+                    }
+                  >
+                    1
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+        ))}
+      </ScrollView>
 
-      <button class="chip">
-        Мото
-      </button>
-
-      <button class="chip">
-        Грузовые
-      </button>
-
-      <button class="chip">
-        Спецтехника
-      </button>
-
-    </div>
-
-    ${listing("transport1")}
-    ${listing("transport2")}
-    ${listing("transport3")}
-
-  `;
+      <BottomBar
+        active="messages"
+        go={go}
+        openCreate={openCreate}
+      />
+    </View>
+  );
 }
 
-
-/* WORK */
-
-function work(){
-
-  screen.innerHTML = `
-
-    ${pageHeader("Работа")}
-
-    ${searchBox("Поиск по вакансиям...")}
-
-    <div class="chips">
-
-      <button class="chip active">
-        Все
-      </button>
-
-      <button class="chip">
-        Полный день
-      </button>
-
-      <button class="chip">
-        Удалённо
-      </button>
-
-      <button class="chip">
-        Частичная
-      </button>
-
-    </div>
-
-    ${workCard("work1")}
-    ${workCard("work2")}
-    ${workCard("work3")}
-    ${workCard("work4")}
-
-  `;
-}
-
-
-function workCard(id){
-
-  const liked =
-    favorites.includes(id);
-
-  return `
-  <div class="work-card">
-
-    <div class="avatar">
-      ${icons.user}
-    </div>
-
-    <div class="lines">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-
-    <button
-      class="heart ${liked ? "liked" : ""}"
-      onclick="toggleFavorite('${id}')"
-    >
-      ${liked
-        ? icons.heartFill
-        : icons.heart}
-    </button>
-
-  </div>`;
-}
-
-
-/* FAVORITES */
-
-function favoritesPage(){
-
-  screen.innerHTML = `
-
-    ${pageHeader("Избранное",false)}
-
-    <div class="segment">
-
-      <button class="active">
-        Объявления
-      </button>
-
-      <button>
-        Продавцы
-      </button>
-
-    </div>
-
-    ${
-      favorites.length === 0
-
-      ? `
-        <div class="empty">
-
-          <div class="empty-icon">
-            ${icons.heart}
-          </div>
-
-          <strong>
-            Здесь пока нет избранных объявлений
-          </strong>
-
-          <span>
-            Добавляйте объявления в избранное,
-            чтобы быстро их находить
-          </span>
-
-        </div>
-      `
-
-      : favorites
-          .map(id => listing(id))
-          .join("")
-    }
-
-  `;
-}
-
-
-/* MESSAGES */
-
-function messages(){
-
-  screen.innerHTML = `
-
-    ${pageHeader("Сообщения",false)}
-
-    ${searchBox("Поиск по сообщениям...")}
-
-    <div>
-
-      ${[1,2,3,4,5].map(i => `
-
-        <div class="message">
-
-          <div class="avatar">
-            ${icons.user}
-          </div>
-
-          <div class="lines">
-            <span></span>
-            <span></span>
-          </div>
-
-          <span class="message-time">
-            ${i === 1 ? "14:32" : "••"}
-          </span>
-
-        </div>
-
-      `).join("")}
-
-    </div>
-
-  `;
-}
-
-
-/* PROFILE */
-
-function profile(){
-
-  screen.innerHTML = `
-
-    ${pageHeader("Профиль",false)}
-
-    <div class="profile">
-
-      <div class="avatar">
-        ${icons.user}
-      </div>
-
-      <div>
-        <span class="profile-name">
-          Пользователь
-        </span>
-
-        <span class="profile-sub">
-          Профиль
-        </span>
-      </div>
-
-    </div>
-
-    <div class="stats">
-
-      <div>
-        —
-        <small>Объявлений</small>
-      </div>
-
-      <div>
-        —
-        <small>Избранное</small>
-      </div>
-
-      <div>
-        —
-        <small>Сообщения</small>
-      </div>
-
-    </div>
-
-    <div class="menu">
-
-      ${menuItem("Мои объявления",icons.work)}
-      ${menuItem("Избранное",icons.heart)}
-      ${menuItem("Сообщения",icons.message)}
-      ${menuItem("Настройки",icons.settings)}
-      ${menuItem("Помощь",icons.message)}
-
-    </div>
-
-  `;
-}
-
-
-function menuItem(name,icon){
-
-  return `
-  <button>
-
-    ${icon}
-
-    <span>${name}</span>
-
-    ${icons.arrow}
-
-  </button>`;
-}
-
-
-/* CREATE */
-
-function create(){
-
-  screen.innerHTML = `
-
-    ${pageHeader("Подать объявление")}
-
-    <div class="steps">
-
-      ${stepItem(1,"Основное")}
-      ${stepItem(2,"Детали")}
-      ${stepItem(3,"Фото")}
-      ${stepItem(4,"Цена")}
-
-    </div>
-
-    ${
-      createStep === 1
-      ? createCategory()
-
-      : createStep === 2
-      ? createDetails()
-
-      : createStep === 3
-      ? createPhotos()
-
-      : createPrice()
-    }
-
-    <button
-      class="primary"
-      onclick="nextCreate()"
-    >
-      ${
-        createStep < 4
-        ? "Далее"
-        : "Опубликовать"
-      }
-
-      ${icons.arrow}
-
-    </button>
-
-  `;
-}
-
-
-function stepItem(number,name){
-
-  return `
-  <div class="step ${
-    createStep === number
-    ? "active"
-    : ""
-  }">
-
-    <b>${number}</b>
-
-    ${name}
-
-  </div>`;
-}
-
-
-function createCategory(){
-
-  return `
-
-    <div class="title-row">
-      <h2>Выберите категорию</h2>
-    </div>
-
-    <div class="create-list">
-
-      <button>
-        ${icons.home}
-        <span>Недвижимость</span>
-        ${icons.arrow}
-      </button>
-
-      <button>
-        ${icons.car}
-        <span>Транспорт</span>
-        ${icons.arrow}
-      </button>
-
-      <button>
-        ${icons.work}
-        <span>Работа</span>
-        ${icons.arrow}
-      </button>
-
-      <button>
-        ${icons.message}
-        <span>Услуги</span>
-        ${icons.arrow}
-      </button>
-
-      <button>
-        ${icons.settings}
-        <span>Электроника</span>
-        ${icons.arrow}
-      </button>
-
-    </div>
-
-  `;
-}
-
-
-function createDetails(){
-
-  return `
-
-    <div class="form">
-
-      <label>
-        Заголовок
-
-        <input
-          placeholder="Введите заголовок"
+function Profile({
+  go,
+  openCreate,
+}) {
+  const menu = [
+    [
+      'Мои объявления',
+      'briefcase-outline',
+    ],
+    [
+      'Избранное',
+      'heart-outline',
+    ],
+    [
+      'Сообщения',
+      'chatbubble-outline',
+    ],
+    [
+      'Настройки',
+      'settings-outline',
+    ],
+    [
+      'Помощь',
+      'help-circle-outline',
+    ],
+  ];
+
+  return (
+    <View style={styles.screen}>
+      <Header
+        title="Профиль"
+        onBack={() => go('home')}
+        right={
+          <Pressable
+            style={styles.iconButton}
+          >
+            <Ionicons
+              name="settings-outline"
+              size={22}
+              color={TEXT}
+            />
+          </Pressable>
+        }
+      />
+
+      <ScrollView
+        contentContainerStyle={
+          styles.content
+        }
+      >
+        <View
+          style={styles.profileHead}
         >
-      </label>
-
-      <label>
-        Описание
-
-        <textarea
-          placeholder="Расскажите подробнее..."
-        ></textarea>
-      </label>
-
-      <label>
-        Тип объявления
-
-        <div class="chips">
-
-          <button class="chip active">
-            Продам
-          </button>
-
-          <button class="chip">
-            Куплю
-          </button>
-
-          <button class="chip">
-            Аренда
-          </button>
-
-        </div>
-
-      </label>
-
-    </div>
-
-  `;
-}
-
-
-function createPhotos(){
-
-  return `
-
-    <div class="photo-box">
-
-      ${icons.image}
-
-      <strong>
-        Добавьте фотографии
-      </strong>
-
-      <span>
-        До 10 изображений
-      </span>
-
-    </div>
-
-  `;
-}
-
-
-function createPrice(){
-
-  return `
-
-    <div class="form">
-
-      <label>
-        Цена
-
-        <input
-          type="number"
-          placeholder="Введите цену"
-        >
-      </label>
-
-      <label>
-        Валюта
-
-        <div class="chips">
-
-          <button class="chip active">
-            —
-          </button>
-
-        </div>
-
-      </label>
-
-    </div>
-
-  `;
-}
-
-
-/* NAVIGATION */
-
-function openPage(page){
-
-  currentPage = page;
-
-  render();
-
-  window.scrollTo(0,0);
-}
-
-
-function goHome(){
-
-  currentPage = "home";
-
-  render();
-
-  window.scrollTo(0,0);
-}
-
-
-function toggleFavorite(id){
-
-  if(favorites.includes(id)){
-    favorites =
-      favorites.filter(x => x !== id);
-  }else{
-    favorites.push(id);
-  }
-
-  render();
-}
-
-
-function nextCreate(){
-
-  if(createStep < 4){
-    createStep++;
-    create();
-  }else{
-    createStep = 1;
-    currentPage = "home";
-    render();
-  }
-
-  window.scrollTo(0,0);
-}
-
-
-function render(){
-
-  if(currentPage === "home"){
-    home();
-  }
-
-  if(currentPage === "realty"){
-    realty();
-  }
-
-  if(currentPage === "transport"){
-    transport();
-  }
-
-  if(currentPage === "work"){
-    work();
-  }
-
-  if(currentPage === "favorites"){
-    favoritesPage();
-  }
-
-  if(currentPage === "messages"){
-    messages();
-  }
-
-  if(currentPage === "profile"){
-    profile();
-  }
-
-  if(currentPage === "create"){
-    create();
-  }
-
-  updateBottom();
-}
-
-
-/* BOTTOM NAV */
-
-function updateBottom(){
-
-  document
-    .querySelectorAll(".bottom button[data-tab]")
-    .forEach(button => {
-
-      button.classList.remove("active");
-
-      if(
-        button.dataset.tab === currentPage
-      ){
-        button.classList.add("active");
-      }
-
-    });
-}
-
-
-document
-  .querySelectorAll(".bottom button[data-tab]")
-  .forEach(button => {
-
-    button.addEventListener("click",() => {
-
-      currentPage =
-        button.dataset.tab;
-
-      render();
-
-      window.scrollTo(0,0);
-
-      if(tg){
-        try{
-          tg.HapticFeedback
-            .selectionChanged();
-        }catch(e){}
-      }
-
-    });
-
-  });
-
-
-document
-  .getElementById("addButton")
-  .addEventListener("click",() => {
-
-    currentPage = "create";
-
-    createStep = 1;
-
-    render();
-
-    window.scrollTo(0,0);
-
-  });
-
-
-/* START */
-
-render();
-
-
-/* SPLASH EXACT STARTUP */
-
-setTimeout(() => {
-
-  document
-    .getElementById("splash")
-    .classList.add("hide");
-
-},1700);
-
-</script>
-
-</body>
-</html>
+          <View
+            style={styles.profileAvatar}
+          >
+            <Ionicons
+              name="person"
+              size={34}
+              color="#9da3a8"
+            />
+          </View>
+
+          <Text
+            style={styles.profileName}
+          >
+            Пользователь
+          </Text>
+        </View>
+
+        <View style={styles.stats}>
+          {[
+            ['12', 'Объявления'],
+            ['8', 'Избранное'],
+            ['3', 'Сообщения'],
+          ].map(([number, label]) => (
+            <View
+              key={label}
+              style={styles.stat}
+            >
+              <Text
+                style={styles.statNum}
+              >
+                {number}
+              </Text>
+
+              <Text
+                style={styles.statLabel}
+              >
+                {label}
+              </Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.menu}>
+          {menu.map(([title, icon]) => (
+            <Pressable
